@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    namespace: 이 mapper 파일이 연결될 Mapper 인터페이스의 전체 클래스 경로
+    MemberMapper.java 인터페이스와 1:1 매칭됨
+-->
+<mapper namespace="com.ysj.practice.member.MemberMapper">
+
+    <!-- 
+        회원정보 생성 SQL
+        - parameterType: MemberDTO 클래스의 전체 경로 지정 (예: com.ysj.practice.member.MemberDTO)
+        - 입력값을 #{필드명} 형태로 자동 매핑
+     -->
+    <insert id="createMember" parameterType="com.ysj.practice.member.MemberDTO">
+        INSERT INTO member (
+            user_id,
+            user_pw,
+            user_name,
+            user_email
+        ) VALUES (
+            #{userId},
+            #{userPw},
+            #{userName},
+            #{userEmail}
+        )
+    </insert>
+
+    <!-- 로그인: 아이디와 비밀번호가 일치하는 회원 1명 조회 -->
+    <select id="loginMember" parameterType="memberdto"
+            resultType="memberdto">
+        SELECT 
+            idx,
+            user_id,
+            user_name,
+            user_email,
+            user_role,
+            created_at
+        FROM member
+        WHERE user_id = #{userId}
+          AND user_pw = #{userPw}
+    </select>
+
+
+    <!-- 
+        회원 단건 조회 (아이디 기준)
+        - parameterType: 전달되는 userId는 String
+        - resultType: 조회된 결과를 MemberDTO 객체로 반환
+     -->
+    <select id="getMemberById" parameterType="String" resultType="memberdto">
+        SELECT
+                idx,
+                user_id,
+                user_pw,
+                user_name,
+                user_email,
+                user_role,
+                created_at as createdAt
+        FROM member
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 
+        회원 정보 수정
+        - 회원의 userId를 기준으로 이름, 이메일, 비밀번호 변경
+        - 전체 MemberDTO를 받아서 수정에 사용
+     -->
+    <update id="updateMember" parameterType="memberdto">
+        UPDATE member
+        <set>
+        	<if test="userPw != null">
+            	user_pw = #{userPw},
+        	</if>
+        	<if test="userName != null">
+	            user_name = #{userName},
+        	</if>
+        	<if test="userEmail != null">
+    	    	user_email = #{userEmail}
+        	</if>
+        </set>
+        WHERE user_id = #{userId}
+    </update>
+
+
+
+    <!-- 
+        회원 삭제 (user_id 기준)
+        - 특정 아이디의 회원을 삭제
+        - parameterType은 userId (String)
+     -->
+    <delete id="deleteMemberById" parameterType="String">
+        DELETE FROM member
+        WHERE user_id = #{userId}
+    </delete>
+
+</mapper>

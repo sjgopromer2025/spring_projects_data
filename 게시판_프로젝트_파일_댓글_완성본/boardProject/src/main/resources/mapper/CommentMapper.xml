@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.boardProject.comment.CommentMapper">
+
+
+    <!-- 새 댓글 추가 -->
+    <insert id="createComment" parameterType="commentdto" useGeneratedKeys="true" keyProperty="idx">
+        INSERT INTO comment(board_idx, user_name, content)
+        VALUES(#{boardIdx}, #{userName}, #{content})
+    </insert>
+
+    <!-- 게시글 ID로 댓글 조회 -->
+    <select id="findAllByBoardIdx" resultType="commentdto" parameterType="int">
+        SELECT 
+        	idx, 
+        	board_idx, 
+        	user_name, 
+        	content, 
+        	DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS created_at 
+        FROM comment 
+        WHERE board_idx = #{boardIdx}
+        ORDER BY created_at DESC
+    </select>
+    
+</mapper>
+
+
+
+    
+<!--     댓글 ID로 댓글 조회 -->
+<!--    <select id="findByIdx" resultType="commentdto" parameterType="int">-->
+<!--        SELECT -->
+<!--        	idx, -->
+<!--        	board_idx, -->
+<!--        	user_name, -->
+<!--        	content, -->
+<!--        	DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS created_at -->
+<!--        FROM comment -->
+<!--        WHERE idx = #{idx}-->
+<!--    </select>-->
+
